@@ -26,6 +26,7 @@ class MWPDataset(Dataset):
         encode_fn (function): A function that converts list of word indices to
             tensor consisting of word embeddings.
     """
+
     def __init__(self, problems, encode_fn):
         self._encode_fn = encode_fn
         self._problems = problems
@@ -47,6 +48,7 @@ class Preprocessor:
     Args:
         embedding_path (str): Path to the embedding to use.
     """
+
     def __init__(self, embedding_path, max_text_len=150, max_op_len=50):
         logging.info('loading embedding...')
         self.num_token = '<num>'
@@ -64,7 +66,7 @@ class Preprocessor:
             valid_ratio (float): Ratio of the data to used as valid data.
         """
         logging.info('loading dataset...')
-        with open(data_path) as fp_data:
+        with open(data_path, encoding='UTF-8') as fp_data:
             raw_problems = json.load(fp_data)
 
         logging.info('preprocessing data...')
@@ -89,16 +91,16 @@ class Preprocessor:
                              'error: {}\n'
                              'text: {}\n'
                              'equation: {}\n'.format(
-                                 err,
-                                 problem[text_key],
-                                 problem[equation_key]))
+                    err,
+                    problem[text_key],
+                    problem[equation_key]))
 
         if n_fail > 0:
             logging.warn('Fail to parse {} problems!'.format(n_fail))
 
         logging.info('Parsed {} problems.'.format(len(processed) - n_fail))
 
-        if index is None:            
+        if index is None:
             random.shuffle(processed)
         else:
             processed = [processed[i] for i in index]
@@ -312,7 +314,7 @@ class Math23kPreprocessor(Preprocessor):
             'text': problem['segmented_text'],
             'ans': problem['ans'],
             'equations': '\r\nequ: ' + problem['equation']
-            }
+        }
 
         for match in re.finditer(r'(\d*\.?\d+)%', intermediate['equations']):
             intermediate['equations'] = intermediate['equations'].replace(
@@ -326,7 +328,7 @@ class Math23kPreprocessor(Preprocessor):
 
 def load_embeddings(embedding_path):
     word_dict = {}
-    with open(embedding_path) as fp:
+    with open(embedding_path, encoding='UTF-8') as fp:
         embedding = []
 
         row1 = fp.readline()
@@ -410,7 +412,7 @@ def infix2postfix(infix):
     redundant_minus_indices = []
     for i, token in enumerate(tokens):
         if token == '-' and (i == 0 or
-                             (i > 0 and tokens[i-1] in '=+-*/(')):
+                             (i > 0 and tokens[i - 1] in '=+-*/(')):
             tokens[i + 1] = str(-float(tokens[i + 1]))
             redundant_minus_indices.append(i)
     for i in redundant_minus_indices[::-1]:
@@ -453,8 +455,8 @@ def infix2postfix(infix):
 
 def replace_number_with_digits(text):
     text = text.replace('$', '$ ') \
-               .replace('/', ' / ') \
-               .replace('a half', '1.5')
+        .replace('/', ' / ') \
+        .replace('a half', '1.5')
     text = text.replace('twice', '2 times')
     text = text.replace('double', '2 times')
 

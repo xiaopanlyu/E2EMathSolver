@@ -29,6 +29,7 @@ def main(args):
             n_epochs=args.n_epochs,
             learning_rate=args.learning_rate,
             device=args.device,
+
             decoder_use_state=args.decoder_use_state)
 
     # load model
@@ -80,9 +81,9 @@ def _parse_args():
     #                     help='Path to the data.')
     # parser.add_argument('embedding_path', type=str,
     #                     help='Path to the embedding.')
-    parser.add_argument('pickle_path', type=str,
+    parser.add_argument('--pickle_path', type=str,
                         help='Path to the train valid pickle.')
-    parser.add_argument('model_path', type=str,
+    parser.add_argument('--model_path', type=str,
                         help='Path to the model checkpoint.')
     parser.add_argument('--log_path', type=str, default='./log.json',
                         help='Path to the log file.')
@@ -117,6 +118,16 @@ def _parse_args():
 
 
 if __name__ == '__main__':
+    '''python train.py ../data/train_valid.pkl ../models/model.pkl --five_fold'''
+    data_dir = "../data"
+    model_dir='../model'
+    command_line = ['train.py',
+                    '--pickle_path=' + data_dir + '/train_valid.pkl',
+                    '--model_path=' + model_dir + '/model.pkl',
+                    '--five_fold']
+
+    # select command line
+    sys.argv = command_line
     args = _parse_args()
     logging.basicConfig(format='%(asctime)s | %(levelname)s | %(message)s',
                         level=logging.INFO, datefmt='%Y-%m-%d %H:%M:%S')

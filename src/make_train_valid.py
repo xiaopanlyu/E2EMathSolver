@@ -8,7 +8,6 @@ import json
 
 
 def main(args):
-
     if args.dataset == 'Dolphin18k':
         from utils import Preprocessor as Preprocessor
     elif args.dataset == 'Math23k':
@@ -39,11 +38,11 @@ def main(args):
 def _parse_args():
     parser = argparse.ArgumentParser(
         description="Preprocess and generate preprocessed pickle.")
-    parser.add_argument('data_path', type=str,
+    parser.add_argument('--data_path', type=str,
                         help='Path to the data.')
-    parser.add_argument('embedding_path', type=str,
+    parser.add_argument('--embedding_path', type=str,
                         help='Path to the embedding.')
-    parser.add_argument('output', type=str,
+    parser.add_argument('--output', type=str,
                         help='Path to the output pickle file.')
     parser.add_argument('--dataset', type=str, default='Math23k',
                         help='[Math23k|Dolphin18k]')
@@ -58,6 +57,17 @@ def _parse_args():
 
 
 if __name__ == '__main__':
+    root_dir = "../data"
+    command_line = ['make_train_valid.py',
+                    '--data_path=' + root_dir + '/Math_23K_zh.json',
+                    '--embedding_path=' + root_dir + '/cc.zh.300.vec',
+                    '--output=' + root_dir + '/train_valid.pkl',
+                    '--valid_ratio=0',
+                    '--char_based']
+
+    # select command line
+    sys.argv = command_line
+
     logging.basicConfig(level=logging.INFO)
     args = _parse_args()
     try:
